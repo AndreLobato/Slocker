@@ -22,7 +22,7 @@ import os
 ############################
 #### Global Variables
 ############################
-url = os.getenv('Slack_Hook_Url', None)
+url = os.getenv('Slack_Hook_Url', "http://None")
 debug = os.getenv('DEBUG', False)
 docker_icon_url = 'https://pbs.twimg.com/profile_images/378800000124779041/fbbb494a7eef5f9278c6967b6072ca3e_200x200.png'
 headers = {'content-type': 'application/json'}
@@ -53,6 +53,7 @@ def Hello():
 @app.route('/', methods=['POST'])
 def ReceiveBuild():
     value = request.json    
+    print request.json
     if request.json:
         app.logger.debug("JSON received...")
         app.logger.debug(json.dumps(request.json))

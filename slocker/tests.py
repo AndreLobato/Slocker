@@ -1,5 +1,6 @@
 import unittest as uni
 import requests
+import flask
 import mock
 import json
 
@@ -24,9 +25,10 @@ class TestSlocker(uni.TestCase):
         dockerhub_data = {'push_data': {'tag':'some_crazy_tag'},
                           'repository': {
                             'repo_name':'NameUserDocker/NameRepoDocker',
-                            'repo_url': "http://repo_url"}}
-        self.app.post('/', data=json.dumps(dockerhub_data),
-                             content_type="application/json", 
-                             follow_redirects=True)
-        print resp.data
-        post.assert_called_once()
+                            'repo_url': "http://None"}}
+
+        with app.test_request_context('/', method='POST', 
+                                      content_type='application/json',
+                                      data=json.dumps(dockerhub_data)):
+            ReceiveBuild()
+            post.assert_called_once()
