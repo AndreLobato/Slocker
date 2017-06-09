@@ -26,9 +26,15 @@ class TestSlocker(uni.TestCase):
                           'repository': {
                             'repo_name':'NameUserDocker/NameRepoDocker',
                             'repo_url': "http://None"}}
-
+        slack_payload = {
+            'channel': "#YourSlackChannel",
+            'icon_url': docker_icon_url,
+            'text': '<http://None|NameUserDocker/NameRepoDocker:some_crazy_tag> built successfully. @mentions1 @mentions2',
+            'username': "Docker Hub",
+        }
         with app.test_request_context('/', method='POST', 
                                       content_type='application/json',
                                       data=json.dumps(dockerhub_data)):
             ReceiveBuild()
-            post.assert_called_once()
+            post.assert_called_once_with('http://None', data=json.dumps(slack_payload),
+                                         headers=headers)

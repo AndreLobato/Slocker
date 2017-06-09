@@ -53,7 +53,6 @@ def Hello():
 @app.route('/', methods=['POST'])
 def ReceiveBuild():
     value = request.json    
-    print request.json
     if request.json:
         app.logger.debug("JSON received...")
         app.logger.debug(json.dumps(request.json))
@@ -61,13 +60,13 @@ def ReceiveBuild():
         valueURL=valueRepo.get("repo_url")
         valueName=valueRepo.get("repo_name")
         valueTag=value.get('push_data').get('tag')
-        valueName += ':'+valueTag
         channel, mentions = SearchRepoName(valueName)
         toSend= {
             'channel': channel,
             'username': 'Docker Hub',
-            'text': '<{}|{}> built successfully. {}'.format(valueURL, valueName,
-                                                            ' '.join(mentions)),
+            'text': '<%s|%s> built successfully. %s'% (valueURL, 
+                                                       valueName+':'+valueTag,
+                                                       ' '.join(mentions)),
             'icon_url': docker_icon_url
         }
         app.logger.debug("Creation Respond...")
