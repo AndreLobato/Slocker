@@ -23,7 +23,7 @@ import os
 #### Global Variables
 ############################
 url = os.environ['Slack_Hook_Url']
-debug = os.getenv['DEBUG', False]
+debug = os.getenv('DEBUG', False)
 docker_icon_url = 'https://pbs.twimg.com/profile_images/378800000124779041/fbbb494a7eef5f9278c6967b6072ca3e_200x200.png'
 headers = {'content-type': 'application/json'}
 ############################
