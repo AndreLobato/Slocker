@@ -64,7 +64,7 @@ def ReceiveBuild():
         valueName += ':'+valueTag
         channel, mentions = SearchRepoName(valueName)
         toSend= {
-            'channel': SearchRepoName(valueName),
+            'channel': channel,
             'username': 'Docker Hub',
             'text': '<{}|{}> built successfully. {}'.format(valueURL, valueName,
                                                             ' '.join(mentions)),
