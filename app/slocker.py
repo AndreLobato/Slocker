@@ -23,11 +23,20 @@ import os
 #### Global Variables
 ############################
 url = os.environ['Slack_Hook_Url']
+debug = os.environ['DEBUG']
 docker_icon_url = 'https://pbs.twimg.com/profile_images/378800000124779041/fbbb494a7eef5f9278c6967b6072ca3e_200x200.png'
 headers = {'content-type': 'application/json'}
 ############################
 #### Define
 ############################
+def SearchRepoName(repo_name):
+    with open('redirectChannel.json', 'r') as json_file:
+        channel_selector = json.load(json_file)
+    if repo_name in channel_selector:
+        return channel_selector[repo_name]
+    else:
+        return None
+
 def SearchRepoName(repo_name):
     with open('redirectChannel.json', 'r') as json_file:
         channel_selector = json.load(json_file)
@@ -53,25 +62,31 @@ def ReceiveBuild():
     value = request.json    
     if request.json:
         app.logger.debug("JSON received...")
+        app.logger.debug(json.dumps(request.json))
         valueRepo=value.get("repository")
         valueURL=valueRepo.get("repo_url")
         valueName=valueRepo.get("repo_name")
+        valueTag=value.get('push_data').get('tag')
+        valueName += ':'+valueTag
+        channel, mentions = SearchRepoName(valueName)
         toSend= {
             'channel': SearchRepoName(valueName),
             'username': 'Docker Hub',
-            'text': '<{}|{}> built successfully.'.format(valueURL, valueName),
+            'text': '<{}|{}> built successfully. {}'.format(valueURL, valueName,
+                                                            ' '.join(mentions)),
             'icon_url': docker_icon_url
         }
         app.logger.debug("Creation Respond...")
         app.logger.debug(json.dumps(toSend))
-        return requests.post(url, data=json.dumps(toSend), headers=headers)
         app.logger.debug("Respond SENT")
+        response = requests.post(url, data=json.dumps(toSend), headers=headers)
+        return response.json()
     else:
         return "Error..."
 ############################
 #### Config
 ############################
 if __name__ == "__main__":
-        app.debug = False
+        app.debug = debug
         app.run(host='0.0.0.0', port=8080)
     
